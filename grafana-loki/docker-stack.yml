@@ -1,0 +1,51 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/swarmlibs/dockerstack-schema/main/schema/dockerstack-spec.json
+
+x-default-logging: &x-default-logging
+  options:
+    max-size: "12m"
+    max-file: "5"
+  driver: json-file
+
+services:
+
+  # ====================================================
+  # Grafana Dashboard
+  # https://github.com/grafana/grafana
+  # ====================================================
+
+  loki:
+    image: swarmlibs/grafana-loki:local
+    deploy:
+      replicas: 1
+      labels:
+        io.prometheus.enabled: "true"
+        io.prometheus.job_name: "loki"
+        io.prometheus.scrape_port: "3100"
+    logging: *x-default-logging
+    ports:
+      - published: 3100
+        target: 3100
+    hostname: loki-{{.Task.Slot}}.grafana.svc.cluster.local
+    networks:
+      grafana:
+      logstack_gwnetwork:
+      prometheus_gwnetwork:
+      dockerswarm_ingress:
+    volumes:
+      - loki-data:/loki
+
+volumes:
+  loki-data:
+
+networks:
+  grafana:
+    # Internal network for Grafana services
+  logstack_gwnetwork:
+    name: logstack_gwnetwork
+    external: true
+  prometheus_gwnetwork:
+    name: prometheus_gwnetwork
+    external: true
+  dockerswarm_ingress:
+    name: dockerswarm_ingress
+    external: true
