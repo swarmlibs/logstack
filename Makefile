@@ -19,4 +19,8 @@ clean:
 	$(MAKE) -C promtail clean
 	$(MAKE) -C grafana-loki clean
 
-reset: remove clean deploy
+reset: remove wait clean deploy
+
+wait:
+	@echo "Waiting for previous recipe to finish..."
+	@sleep 20
