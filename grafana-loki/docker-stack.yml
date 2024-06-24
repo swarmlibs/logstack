@@ -14,7 +14,7 @@ services:
   # ====================================================
 
   loki:
-    image: swarmlibs/grafana-loki:local
+    image: swarmlibs/grafana-loki:main
     environment:
       - DOCKERSWARM_SERVICE_ID={{.Service.ID}}
       - DOCKERSWARM_SERVICE_NAME={{.Service.Name}}
@@ -24,8 +24,11 @@ services:
       - DOCKERSWARM_TASK_NAME={{.Task.Name}}
       - DOCKERSWARM_TASK_SLOT={{.Task.Slot}}
       - DOCKERSWARM_STACK_NAMESPACE={{ index .Service.Labels "com.docker.stack.namespace"}}
+      - GF_LOKI_COMMON_STORAGE_RING_REPLICATION_FACTOR=1
     deploy:
-      mode: global
+      replicas: 3
+      placement:
+        max_replicas_per_node: 1
       labels:
         io.prometheus.enabled: "true"
         io.prometheus.job_name: "loki"
@@ -35,17 +38,17 @@ services:
       - published: 3100
         target: 3100
         mode: host
-    hostname: loki-{{.Task.Slot}}.grafana.svc.cluster.local
+    hostname: grafana-loki.svc.cluster.local
     networks:
       grafana:
       logstack_gwnetwork:
       prometheus_gwnetwork:
       dockerswarm_ingress:
     volumes:
-      - loki-data:/loki
+      - grafana-loki-data:/loki
 
 volumes:
-  loki-data:
+  grafana-loki-data:
 
 networks:
   grafana:

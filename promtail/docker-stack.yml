@@ -14,7 +14,7 @@ services:
   # ====================================================
 
   promtail:
-    image: swarmlibs/promtail:local
+    image: swarmlibs/promtail:main
     deploy:
       mode: global
       placement:
@@ -30,7 +30,7 @@ services:
       - published: 9080
         target: 9080
         mode: host
-    hostname: promtail.{{.Node.ID}}.cluster.local
+    hostname: promtail.{{.Task.Slot}}.cluster.local
     networks:
       logstack_gwnetwork:
       prometheus_gwnetwork:
