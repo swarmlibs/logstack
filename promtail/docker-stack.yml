@@ -16,7 +16,7 @@ services:
   promtail:
     image: swarmlibs/promtail:local
     environment:
-      - GF_LOKI_HOST=loki-gateway
+      - GF_LOKI_HOST=grafana-loki.svc.cluster.local
     deploy:
       mode: global
       placement:
