@@ -14,8 +14,8 @@ x-deploy: &x-deploy
 services:
 
   # ====================================================
-  # Grafana Dashboard
-  # https://github.com/grafana/grafana
+  # Grafana Loki
+  # https://github.com/grafana/loki
   # ====================================================
 
   loki:
