@@ -14,7 +14,9 @@ services:
   # ====================================================
 
   promtail:
-    image: swarmlibs/promtail:main
+    image: swarmlibs/promtail:local
+    environment:
+      - GF_LOKI_HOST=loki-gateway
     deploy:
       mode: global
       placement:

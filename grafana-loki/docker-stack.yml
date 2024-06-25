@@ -6,6 +6,11 @@ x-default-logging: &x-default-logging
     max-file: "5"
   driver: json-file
 
+x-deploy: &x-deploy
+  mode: global
+  placement:
+    max_replicas_per_node: 1
+
 services:
 
   # ====================================================
@@ -24,28 +29,35 @@ services:
       - DOCKERSWARM_TASK_NAME={{.Task.Name}}
       - DOCKERSWARM_TASK_SLOT={{.Task.Slot}}
       - DOCKERSWARM_STACK_NAMESPACE={{ index .Service.Labels "com.docker.stack.namespace"}}
-      - GF_LOKI_COMMON_STORAGE_RING_REPLICATION_FACTOR=1
+    deploy: *x-deploy
+    logging: *x-default-logging
+    hostname: replica-{{.Task.Slot}}.grafana-loki.internal
+    networks:
+      grafana:
+    volumes:
+      - grafana-loki-data:/loki
+
+  loki-gateway:
+    image: swarmlibs/docker-task-proxy:main
+    environment:
+      - TARGET_TASK_ADDR=replica-{{.Task.Slot}}.grafana-loki.internal:3100
     deploy:
-      replicas: 3
-      placement:
-        max_replicas_per_node: 1
+      <<: *x-deploy
       labels:
         io.prometheus.enabled: "true"
         io.prometheus.job_name: "loki"
-        io.prometheus.scrape_port: "3100"
     logging: *x-default-logging
+    hostname: grafana-loki.svc.cluster.local
     ports:
       - published: 3100
-        target: 3100
-        mode: host
-    hostname: grafana-loki.svc.cluster.local
+        target: 80
     networks:
       grafana:
       logstack_gwnetwork:
       prometheus_gwnetwork:
       dockerswarm_ingress:
-    volumes:
-      - grafana-loki-data:/loki
+    depends_on:
+      - loki
 
 volumes:
   grafana-loki-data:
