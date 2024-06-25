@@ -10,6 +10,9 @@ x-deploy: &x-deploy
   mode: global
   placement:
     max_replicas_per_node: 1
+    constraints:
+      - node.role == worker
+      - node.labels.io.swarmlibs.logstack == true
 
 services:
 
