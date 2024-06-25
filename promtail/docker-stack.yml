@@ -21,8 +21,6 @@ services:
       mode: global
       placement:
         max_replicas_per_node: 1
-        constraints:
-          - node.role == manager
       labels:
         io.prometheus.role: "promtail"
         io.prometheus.dockerswarm-tasks.should_be_scraped: "false"
