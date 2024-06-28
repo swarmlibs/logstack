@@ -34,7 +34,7 @@ services:
       - DOCKERSWARM_STACK_NAMESPACE={{ index .Service.Labels "com.docker.stack.namespace"}}
     deploy: *x-deploy
     logging: *x-default-logging
-    hostname: replica-{{.Task.Slot}}.grafana-loki.internal
+    hostname: replica-{{.Task.Slot}}.loki.internal
     networks:
       grafana:
     volumes:
@@ -43,7 +43,7 @@ services:
   loki-gateway:
     image: swarmlibs/docker-task-proxy:main
     environment:
-      - TARGET_TASK_ADDR=replica-{{.Task.Slot}}.grafana-loki.internal:3100
+      - TARGET_TASK_ADDR=replica-{{.Task.Slot}}.loki.internal:3100
     deploy:
       <<: *x-deploy
       labels:
