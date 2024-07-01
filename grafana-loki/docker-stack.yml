@@ -77,3 +77,9 @@ networks:
   dockerswarm_ingress:
     name: dockerswarm_ingress
     external: true
+
+configs:
+  loki-datasource-v1:
+    file: ./grafana-datasource/loki.yml
+    labels:
+      - "io.grafana.provisioning.datasource=true"
