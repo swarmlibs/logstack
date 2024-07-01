@@ -79,7 +79,7 @@ networks:
     external: true
 
 configs:
-  loki-datasource-v1:
+  grafana-datasource-v1:
     file: ./grafana-datasource/loki.yml
     labels:
       - "io.grafana.provisioning.datasource=true"
