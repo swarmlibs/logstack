@@ -14,7 +14,7 @@ services:
   # ====================================================
 
   promtail:
-    image: swarmlibs/promtail:local
+    image: swarmlibs/promtail:main
     environment:
       - GF_LOKI_HOST=grafana-loki.svc.cluster.local
     deploy:
