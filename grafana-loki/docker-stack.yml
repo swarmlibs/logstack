@@ -58,7 +58,6 @@ services:
       grafana:
       logstack_gwnetwork:
       prometheus_gwnetwork:
-      dockerswarm_ingress:
     depends_on:
       - loki
 
@@ -73,9 +72,6 @@ networks:
     external: true
   prometheus_gwnetwork:
     name: prometheus_gwnetwork
-    external: true
-  dockerswarm_ingress:
-    name: dockerswarm_ingress
     external: true
 
 configs:
