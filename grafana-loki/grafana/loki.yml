@@ -6,6 +6,8 @@ deleteDatasources:
   - name: Loki PromQL (Logstack)
     orgId: 1
 
+prune: true
+
 datasources:
   - name: Loki (Logstack)
     type: loki
