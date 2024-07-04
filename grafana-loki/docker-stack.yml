@@ -37,6 +37,8 @@ services:
     hostname: replica-{{.Task.Slot}}.loki.internal
     networks:
       grafana:
+    configs:
+      - grafana-datasource
     volumes:
       - grafana-loki-data:/loki
 
@@ -76,6 +78,7 @@ networks:
 
 configs:
   grafana-datasource:
+    name: gf-provisioning-datasource-loki-v1
     file: ./grafana/loki.yml
     labels:
       - "io.grafana.provisioning.datasource=true"
