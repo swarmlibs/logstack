@@ -34,6 +34,8 @@ services:
     networks:
       logstack_gwnetwork:
       prometheus_gwnetwork:
+    configs:
+      - prometheus-scrape-config
     volumes:
       - type: bind
         source: /var/run/docker.sock
@@ -42,6 +44,13 @@ services:
       - type: volume
         source: promtail-data
         target: /promtail
+
+configs:
+  prometheus-scrape-config:
+    name: prometheus-scrape-config-promtail-v1
+    file: ./prometheus/dockerswarm-nodes-promtail.yml
+    labels:
+      - "io.prometheus.scrape_config=true"
 
 volumes:
   promtail-data:
