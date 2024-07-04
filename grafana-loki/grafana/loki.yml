@@ -16,8 +16,7 @@ datasources:
     url: http://grafana-loki.svc.cluster.local
     version: 1
     isDefault: false
-    editable: true
-    readOnly: false
+    editable: false
   - name: Loki PromQL (Logstack)
     type: prometheus
     access: proxy
@@ -25,5 +24,4 @@ datasources:
     url: http://grafana-loki.svc.cluster.local/loki
     version: 1
     isDefault: false
-    editable: true
-    readOnly: false
+    editable: false
