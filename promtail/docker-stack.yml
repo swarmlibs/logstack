@@ -60,5 +60,5 @@ networks:
     name: logstack_gwnetwork
     external: true
   prometheus_gwnetwork:
-    name: logstack_gwnetwork
+    name: prometheus_gwnetwork
     external: true
