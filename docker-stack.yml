@@ -1,6 +1,6 @@
 version: "3.12"
 services:
-  loki:
+  grafana-loki:
     configs:
     - source: gf-provisioning-datasource-grafana-loki
     deploy:
@@ -32,7 +32,7 @@ services:
     - type: volume
       source: grafana-loki-data
       target: /loki
-  loki-gateway:
+  grafana-loki-gateway:
     depends_on:
     - loki
     deploy:
