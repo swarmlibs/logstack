@@ -38,7 +38,7 @@ services:
     networks:
       grafana:
     configs:
-      - grafana-datasource
+      - gf-provisioning-datasource-grafana-loki
     volumes:
       - grafana-loki-data:/loki
 
@@ -77,8 +77,8 @@ networks:
     external: true
 
 configs:
-  grafana-datasource:
-    name: gf-provisioning-datasource-loki-v1
+  gf-provisioning-datasource-grafana-loki:
+    name: gf-provisioning-datasource-grafana-loki-v1
     file: ./grafana/loki.yml
     labels:
       - "io.grafana.provisioning.datasource=true"
