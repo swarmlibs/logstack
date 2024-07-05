@@ -55,6 +55,14 @@ docker network create --scope=swarm --driver=overlay --attachable logstack_gwnet
 docker network create --scope=swarm --driver=overlay --attachable prometheus_gwnetwork
 ```
 
+The `grafana-loki` service is deployed on nodes that match the following labels:
+
+```sh
+docker node update --label-add "io.logstack.grafana-loki=true" <node-id>
+```
+
+See [Control service placement](https://docs.docker.com/engine/swarm/services/#control-service-placement) for more information.
+
 ### Deploy logstack
 
 ```sh
