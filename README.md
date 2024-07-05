@@ -51,19 +51,20 @@ cd logstack
 Create user-defined networks:
 
 ```sh
-# TBD
+docker network create --scope=swarm --driver=overlay --attachable logstack_gwnetwork
+docker network create --scope=swarm --driver=overlay --attachable prometheus_gwnetwork
 ```
 
 ### Deploy logstack
 
 ```sh
-# TBD
+make deploy
 ```
 
 ### Remove logstack
 
 ```sh
-# TBD
+make remove
 ```
 
 ---

@@ -1,26 +1,27 @@
-docker-stack-name = test_prometheus
+make: docker-stack.yml
+	@echo "Usage: make [deploy|remove|clean]"
+	@echo "  deploy: Deploy the stack"
+	@echo "  remove: Remove the stack"
+	@echo "  clean: Clean up temporary files"
 
-it:
-	@echo "make [deploy|remove|clean|reset] docker-stack-name=$(docker-stack-name)"
-
-networks:
-	@docker network create --scope=swarm --driver=overlay --attachable dockerswarm_ingress > /dev/null 2>&1 || true
-	@docker network create --scope=swarm --driver=overlay --attachable logstack_gwnetwork > /dev/null 2>&1 || true
-
-deploy: networks
-	$(MAKE) -C promtail deploy
-	$(MAKE) -C grafana-loki deploy
+docker-stack.yml:
+	@mkdir -p _tmp
+	docker stack config -c grafana-loki/docker-stack.yml > _tmp/grafana-loki.yml
+	docker stack config -c promtail/docker-stack.yml > _tmp/promtail.yml
+	docker stack config \
+		--skip-interpolation \
+		-c _tmp/grafana-loki.yml \
+		-c _tmp/promtail.yml \
+	> docker-stack.yml
+	@rm -rf _tmp
+	@cat docker-stack.yml | sed 's|$(PWD)/||g' | sed '1d' | tee docker-stack.yml
+	
+deploy: docker-stack.yml
+	docker stack deploy -c docker-stack.yml logstack
 
 remove:
-	$(MAKE) -C promtail remove
-	$(MAKE) -C grafana-loki remove
+	docker stack rm logstack
 
 clean:
-	$(MAKE) -C promtail clean
-	$(MAKE) -C grafana-loki clean
-
-reset: remove wait clean deploy
-
-wait:
-	@echo "Waiting for previous recipe to finish..."
-	@sleep 20
+	@rm -rf _tmp || true
+	@rm -f docker-stack.yml || true
