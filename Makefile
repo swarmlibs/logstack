@@ -1,3 +1,6 @@
+DOCKER_STACK_CONFIG := docker stack config
+DOCKER_STACK_CONFIG_ARGS := --skip-interpolation
+
 make: docker-stack.yml
 	@echo "Usage: make [deploy|remove|clean]"
 	@echo "  deploy: Deploy the stack"
@@ -6,10 +9,9 @@ make: docker-stack.yml
 
 docker-stack.yml:
 	@mkdir -p _tmp
-	docker stack config -c grafana-loki/docker-stack.yml > _tmp/grafana-loki.yml
-	docker stack config -c promtail/docker-stack.yml > _tmp/promtail.yml
-	docker stack config \
-		--skip-interpolation \
+	$(DOCKER_STACK_CONFIG) $(DOCKER_STACK_CONFIG_ARGS) -c grafana-loki/docker-stack.yml > _tmp/grafana-loki.yml
+	$(DOCKER_STACK_CONFIG) $(DOCKER_STACK_CONFIG_ARGS) -c promtail/docker-stack.yml > _tmp/promtail.yml
+	$(DOCKER_STACK_CONFIG) $(DOCKER_STACK_CONFIG_ARGS) \
 		-c _tmp/grafana-loki.yml \
 		-c _tmp/promtail.yml \
 	> docker-stack.yml
