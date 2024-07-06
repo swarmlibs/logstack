@@ -110,7 +110,7 @@ volumes:
 configs:
   gf-provisioning-datasource-grafana-loki:
     name: gf-provisioning-datasource-grafana-loki-v1
-    file: grafana-loki/grafana/loki.yml
+    file: grafana-loki/grafana/grafana-loki.yml
     labels:
       io.grafana.provisioning.datasource: "true"
   prometheus-promtail:
