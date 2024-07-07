@@ -52,7 +52,7 @@ services:
 configs:
   prometheus-promtail:
     name: prometheus-promtail-v1
-    file: ./prometheus/dockerswarm-nodes-promtail.yml
+    file: ./prometheus/promtail.yml
     labels:
       - "io.prometheus.scrape_config=true"
 

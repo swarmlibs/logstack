@@ -119,7 +119,7 @@ configs:
       io.grafana.provisioning.datasource: "true"
   prometheus-promtail:
     name: prometheus-promtail-v1
-    file: promtail/prometheus/dockerswarm-nodes-promtail.yml
+    file: promtail/prometheus/promtail.yml
     labels:
       io.prometheus.scrape_config: "true"
 x-default-logging:
