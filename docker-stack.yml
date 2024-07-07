@@ -47,7 +47,7 @@ services:
         max_replicas_per_node: 1
     environment:
       TARGET_TASK_ADDR: replica-{{.Task.Slot}}.grafana-loki.internal:3100
-    hostname: grafana-loki.svc.cluster.local
+    hostname: replica-{{.Task.Slot}}.grafana-loki-gateway.internal
     image: swarmlibs/docker-task-proxy:main
     logging:
       driver: json-file
@@ -57,7 +57,9 @@ services:
     networks:
       grafana: null
       logstack_gwnetwork: null
-      prometheus_gwnetwork: null
+      prometheus_gwnetwork:
+        aliases:
+        - grafana-loki.svc.cluster.local
     ports:
     - target: 80
       published: 3100
@@ -83,11 +85,9 @@ services:
         max-size: 12m
     networks:
       logstack_gwnetwork: null
-      prometheus_gwnetwork: null
-    ports:
-    - mode: host
-      target: 9080
-      published: 9080
+      prometheus_gwnetwork:
+        aliases:
+        - promtail.local
     volumes:
     - type: bind
       source: /var/run/docker.sock

@@ -52,7 +52,7 @@ services:
         io.prometheus.enabled: "true"
         io.prometheus.job_name: "loki"
     logging: *x-default-logging
-    hostname: grafana-loki.svc.cluster.local
+    hostname: replica-{{.Task.Slot}}.grafana-loki-gateway.internal
     ports:
       - published: 3100
         target: 80
@@ -60,6 +60,8 @@ services:
       grafana:
       logstack_gwnetwork:
       prometheus_gwnetwork:
+        aliases:
+          - grafana-loki.svc.cluster.local
     depends_on:
       - loki
 
