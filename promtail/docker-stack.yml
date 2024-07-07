@@ -16,7 +16,7 @@ services:
   promtail:
     image: swarmlibs/promtail:main
     environment:
-      - GF_LOKI_HOST=grafana-loki.svc.cluster.local
+      - GF_LOKI_HOST=grafana-loki.local
     deploy:
       mode: global
       placement:
@@ -33,6 +33,8 @@ services:
     hostname: replica-{{.Task.Slot}}.promtail.local
     networks:
       logstack_gwnetwork:
+        aliases:
+          - promtail.local
       prometheus_gwnetwork:
         aliases:
           - promtail.local

@@ -19,7 +19,7 @@ services:
       DOCKERSWARM_TASK_ID: '{{.Task.ID}}'
       DOCKERSWARM_TASK_NAME: '{{.Task.Name}}'
       DOCKERSWARM_TASK_SLOT: '{{.Task.Slot}}'
-    hostname: replica-{{.Task.Slot}}.grafana-loki.internal
+    hostname: replica-{{.Task.Slot}}.grafana-loki.local
     image: swarmlibs/grafana-loki:main
     logging:
       driver: json-file
@@ -46,8 +46,8 @@ services:
         - node.labels.io.logstack.grafana-loki == true
         max_replicas_per_node: 1
     environment:
-      TARGET_TASK_ADDR: replica-{{.Task.Slot}}.grafana-loki.internal:3100
-    hostname: replica-{{.Task.Slot}}.grafana-loki-gateway.internal
+      TARGET_TASK_ADDR: replica-{{.Task.Slot}}.grafana-loki.local:3100
+    hostname: replica-{{.Task.Slot}}.grafana-loki-gateway.local
     image: swarmlibs/docker-task-proxy:main
     logging:
       driver: json-file
@@ -56,10 +56,12 @@ services:
         max-size: 12m
     networks:
       grafana: null
-      logstack_gwnetwork: null
+      logstack_gwnetwork:
+        aliases:
+        - grafana-loki.local
       prometheus_gwnetwork:
         aliases:
-        - grafana-loki.svc.cluster.local
+        - grafana-loki.local
     ports:
     - target: 80
       published: 3100
@@ -75,7 +77,7 @@ services:
       placement:
         max_replicas_per_node: 1
     environment:
-      GF_LOKI_HOST: grafana-loki.svc.cluster.local
+      GF_LOKI_HOST: grafana-loki.local
     hostname: replica-{{.Task.Slot}}.promtail.local
     image: swarmlibs/promtail:main
     logging:
@@ -84,7 +86,9 @@ services:
         max-file: "5"
         max-size: 12m
     networks:
-      logstack_gwnetwork: null
+      logstack_gwnetwork:
+        aliases:
+        - promtail.local
       prometheus_gwnetwork:
         aliases:
         - promtail.local
