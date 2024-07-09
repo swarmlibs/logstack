@@ -21,6 +21,8 @@ docker-stack.yml:
 	@mv docker-stack.yml.tmp docker-stack.yml
 	
 deploy: docker-stack.yml
+	docker network create --scope=swarm --driver=overlay --attachable logstack_gwnetwork || true
+	docker network create --scope=swarm --driver=overlay --attachable prometheus_gwnetwork || true
 	docker stack deploy -c docker-stack.yml logstack
 
 remove:
