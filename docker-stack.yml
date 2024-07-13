@@ -4,11 +4,10 @@ services:
     configs:
     - source: gf-provisioning-datasource-grafana-loki
     deploy:
-      mode: global
+      replicas: 1
       placement:
         constraints:
         - node.role == manager
-        - node.labels.io.logstack.grafana-loki == true
         max_replicas_per_node: 1
     environment:
       DOCKERSWARM_NODE_HOSTNAME: '{{.Node.Hostname}}'
@@ -42,9 +41,7 @@ services:
         io.prometheus.job_name: loki
       placement:
         constraints:
-        - node.role == manager
-        - node.labels.io.logstack.grafana-loki == true
-        max_replicas_per_node: 1
+        - node.labels.services.logstack_grafana-loki == true
     environment:
       TARGET_TASK_ADDR: replica-{{.Task.Slot}}.grafana-loki.local:3100
     hostname: replica-{{.Task.Slot}}.grafana-loki-gateway.local
@@ -128,9 +125,13 @@ x-default-logging:
     max-file: "5"
     max-size: 12m
 x-deploy:
-  mode: global
   placement:
     constraints:
     - node.role == manager
-    - node.labels.io.logstack.grafana-loki == true
     max_replicas_per_node: 1
+  replicas: 1
+x-grafana-subservice-deploy:
+  mode: global
+  placement:
+    constraints:
+    - node.labels.services.logstack_grafana-loki == true

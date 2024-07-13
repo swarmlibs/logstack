@@ -7,12 +7,17 @@ x-default-logging: &x-default-logging
   driver: json-file
 
 x-deploy: &x-deploy
-  mode: global
+  replicas: 1
   placement:
     max_replicas_per_node: 1
     constraints:
       - node.role == manager
-      - node.labels.io.logstack.grafana-loki == true
+
+x-grafana-subservice-deploy: &x-grafana-subservice-deploy
+  mode: global
+  placement:
+    constraints:
+      - node.labels.services.logstack_grafana-loki == true
 
 services:
 
@@ -47,7 +52,7 @@ services:
     environment:
       - TARGET_TASK_ADDR=replica-{{.Task.Slot}}.grafana-loki.local:3100
     deploy:
-      <<: *x-deploy
+      <<: *x-grafana-subservice-deploy
       labels:
         io.prometheus.enabled: "true"
         io.prometheus.job_name: "loki"
