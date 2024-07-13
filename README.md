@@ -31,6 +31,7 @@ Like Promstack, but for logs. Includes (Grafana Loki and Promtail)
 
 - Docker running Swarm mode
 - A Docker Swarm cluster with at least 3 nodes
+- The official [swarmlibs](https://github.com/swarmlibs/swarmlibs) stack, this provided necessary services for other stacks operate.
 
 ## Getting Started
 
