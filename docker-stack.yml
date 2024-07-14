@@ -26,7 +26,9 @@ services:
         max-file: "5"
         max-size: 12m
     networks:
-      grafana: null
+      grafana:
+        aliases:
+        - grafana-loki.local
     volumes:
     - type: volume
       source: grafana-loki-data

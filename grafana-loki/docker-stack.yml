@@ -42,6 +42,8 @@ services:
     hostname: replica-{{.Task.Slot}}.grafana-loki.local
     networks:
       grafana:
+        aliases:
+          - grafana-loki.local
     configs:
       - gf-provisioning-datasource-grafana-loki
     volumes:
