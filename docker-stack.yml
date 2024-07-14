@@ -41,7 +41,7 @@ services:
         io.prometheus.job_name: loki
       placement:
         constraints:
-        - node.labels.services.logstack_grafana-loki == true
+        - node.labels.services.logstack_grafana_loki == true
     environment:
       TARGET_TASK_ADDR: replica-{{.Task.Slot}}.grafana-loki.local:3100
     hostname: replica-{{.Task.Slot}}.grafana-loki-gateway.local
@@ -134,4 +134,4 @@ x-grafana-subservice-deploy:
   mode: global
   placement:
     constraints:
-    - node.labels.services.logstack_grafana-loki == true
+    - node.labels.services.logstack_grafana_loki == true

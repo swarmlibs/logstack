@@ -17,7 +17,7 @@ x-grafana-subservice-deploy: &x-grafana-subservice-deploy
   mode: global
   placement:
     constraints:
-      - node.labels.services.logstack_grafana-loki == true
+      - node.labels.services.logstack_grafana_loki == true
 
 services:
 
