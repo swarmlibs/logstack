@@ -142,7 +142,7 @@ configs:
       io.prometheus.scrape_config: "true"
   promtail-config.yaml:
     name: promtail-config.yaml-v1
-    file: promtail/configs/promtail-config.yaml
+    file: promtail/promtail/promtail-config.yaml
 x-default-logging:
   driver: json-file
   options:

@@ -55,21 +55,6 @@ services:
         source: promtail-data
         target: /promtail
 
-configs:
-  promtail-config.yaml:
-    name: promtail-config.yaml-v1
-    file: ./configs/promtail-config.yaml
-
-  # Prometheus scrape config
-  prometheus-promtail:
-    name: prometheus-promtail-v1
-    file: ./prometheus/promtail.yml
-    labels:
-      - "io.prometheus.scrape_config=true"
-
-volumes:
-  promtail-data:
-
 networks:
   logstack_gwnetwork:
     name: logstack_gwnetwork
@@ -77,3 +62,19 @@ networks:
   prometheus_gwnetwork:
     name: prometheus_gwnetwork
     external: true
+
+volumes:
+  promtail-data:
+
+configs:
+  # Promtail config
+  promtail-config.yaml:
+    name: promtail-config.yaml-v1
+    file: ./promtail/promtail-config.yaml
+
+  # Prometheus scrape config
+  prometheus-promtail:
+    name: prometheus-promtail-v1
+    file: ./prometheus/promtail.yml
+    labels:
+      - "io.prometheus.scrape_config=true"
