@@ -17,7 +17,7 @@ x-grafana-subservice-deploy: &x-grafana-subservice-deploy
   mode: global
   placement:
     constraints:
-      - node.labels.services.logstack_grafana_loki == true
+      - node.labels.services.logstack_grafana_loki_server == true
 
 services:
 
@@ -26,7 +26,7 @@ services:
   # https://github.com/grafana/loki
   # ====================================================
 
-  grafana-loki:
+  grafana-loki-server:
     image: swarmlibs/grafana-loki:main
     environment:
       - DOCKERSWARM_SERVICE_ID={{.Service.ID}}
@@ -37,43 +37,36 @@ services:
       - DOCKERSWARM_TASK_NAME={{.Task.Name}}
       - DOCKERSWARM_TASK_SLOT={{.Task.Slot}}
       - DOCKERSWARM_STACK_NAMESPACE={{ index .Service.Labels "com.docker.stack.namespace"}}
-    deploy: *x-deploy
-    logging: *x-default-logging
-    hostname: replica-{{.Task.Slot}}.grafana-loki.local
+    hostname: replica-{{.Node.ID}}.grafana-loki.local
     networks:
       grafana:
-        aliases:
-          - grafana-loki.local
     configs:
-      - gf-provisioning-datasource-grafana-loki
+      - source: gf-provisioning-datasource-grafana-loki
     volumes:
       - grafana-loki-data:/loki
+    logging: *x-default-logging
+    deploy: *x-deploy
 
-  grafana-loki-gateway:
+  grafana-loki:
     image: swarmlibs/docker-task-proxy:main
     environment:
-      - TARGET_TASK_ADDR=replica-{{.Task.Slot}}.grafana-loki.local:3100
-    deploy:
-      <<: *x-grafana-subservice-deploy
-      labels:
-        io.prometheus.enabled: "true"
-        io.prometheus.job_name: "loki"
-    logging: *x-default-logging
-    hostname: replica-{{.Task.Slot}}.grafana-loki-gateway.local
+      - TARGET_TASK_ADDR=replica-{{.Node.ID}}.grafana-loki.local:3100
+    hostname: grafana-loki.local
     ports:
       - published: 3100
         target: 80
     networks:
       grafana:
       logstack_gwnetwork:
-        aliases:
-          - grafana-loki.local
       prometheus_gwnetwork:
-        aliases:
-          - grafana-loki.local
     depends_on:
       - loki
-
+    logging: *x-default-logging
+    deploy:
+      <<: *x-grafana-subservice-deploy
+      labels:
+        io.prometheus.enabled: "true"
+        io.prometheus.job_name: "loki"
 volumes:
   grafana-loki-data:
 
