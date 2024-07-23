@@ -12,7 +12,7 @@ services:
         constraints:
         - node.labels.services.logstack_grafana_loki_server == true
     environment:
-      TARGET_TASK_ADDR: replica-{{.Node.ID}}.grafana-loki.local:3100
+      TARGET_TASK_ADDR: replica-{{.Node.ID}}.grafana-loki-internal:3100
     hostname: grafana-loki.local
     image: swarmlibs/docker-task-proxy:main
     logging:
@@ -72,25 +72,34 @@ services:
       source: promtail-data
       target: /promtail
   grafana-loki-server:
+    command:
+    - -config.expand-env
+    - -config.file=/etc/loki/grafana-loki-config.yaml
+    - -common.storage.ring.store=memberlist
+    - -memberlist.bind-port=7946
+    - -memberlist.join=dns+tasks.grafana-loki-server:7946
+    - -memberlist.rejoin-interval=30s
+    - -memberlist.dead-node-reclaim-time=30s
+    - -memberlist.abort-if-join-fails
     configs:
+    - source: grafana-loki-docker-entrypoint-shim.sh
+      target: /docker-entrypoint-shim.sh
+      mode: 365
+    - source: grafana-loki-config.yaml
+      target: /etc/loki/grafana-loki-config.yaml
     - source: gf-provisioning-datasource-grafana-loki
     deploy:
       replicas: 1
       placement:
-        constraints:
-        - node.role == manager
         max_replicas_per_node: 1
+    entrypoint:
+    - /docker-entrypoint-shim.sh
     environment:
-      DOCKERSWARM_NODE_HOSTNAME: '{{.Node.Hostname}}'
-      DOCKERSWARM_NODE_ID: '{{.Node.ID}}'
-      DOCKERSWARM_SERVICE_ID: '{{.Service.ID}}'
-      DOCKERSWARM_SERVICE_NAME: '{{.Service.Name}}'
-      DOCKERSWARM_STACK_NAMESPACE: '{{ index .Service.Labels "com.docker.stack.namespace"}}'
-      DOCKERSWARM_TASK_ID: '{{.Task.ID}}'
-      DOCKERSWARM_TASK_NAME: '{{.Task.Name}}'
-      DOCKERSWARM_TASK_SLOT: '{{.Task.Slot}}'
-    hostname: replica-{{.Node.ID}}.grafana-loki.local
-    image: swarmlibs/grafana-loki:main
+      GF_LOKI_ADVERTISE_INTERFACE: eth0
+      GF_LOKI_COMMON_STORAGE_RING_REPLICATION_FACTOR: null
+      GF_LOKI_DOCKER_STACK_NAMESPACE: '{{ index .Service.Labels "com.docker.stack.namespace"}}'
+    hostname: replica-{{.Node.ID}}.grafana-loki-internal
+    image: grafana/loki:2.9.9
     logging:
       driver: json-file
       options:
@@ -98,6 +107,7 @@ services:
         max-size: 12m
     networks:
       grafana: null
+    stop_signal: SIGTERM
     volumes:
     - type: volume
       source: grafana-loki-data
@@ -119,6 +129,12 @@ configs:
     file: grafana-loki/grafana/grafana-loki.yml
     labels:
       io.grafana.provisioning.datasource: "true"
+  grafana-loki-config.yaml:
+    name: grafana-loki-config.yaml-v1
+    file: grafana-loki/grafana-loki-config.yaml
+  grafana-loki-docker-entrypoint-shim.sh:
+    name: grafana-loki-docker-entrypoint-shim.sh-v1
+    file: grafana-loki/docker-entrypoint-shim.sh
   prometheus-promtail:
     name: prometheus-promtail-v1
     file: grafana-loki-promtail/prometheus/promtail.yml
@@ -134,8 +150,6 @@ x-default-logging:
     max-size: 12m
 x-deploy:
   placement:
-    constraints:
-    - node.role == manager
     max_replicas_per_node: 1
   replicas: 1
 x-grafana-subservice-deploy:

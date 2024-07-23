@@ -10,8 +10,6 @@ x-deploy: &x-deploy
   replicas: 1
   placement:
     max_replicas_per_node: 1
-    constraints:
-      - node.role == manager
 
 x-grafana-subservice-deploy: &x-grafana-subservice-deploy
   mode: global
@@ -27,30 +25,43 @@ services:
   # ====================================================
 
   grafana-loki-server:
-    image: swarmlibs/grafana-loki:main
+    image: grafana/loki:2.9.9
+    entrypoint: ["/docker-entrypoint-shim.sh"]
+    command:
+      - -config.expand-env
+      - -config.file=/etc/loki/grafana-loki-config.yaml
+      - -common.storage.ring.store=memberlist
+      - -memberlist.bind-port=7946
+      - -memberlist.join=dns+tasks.grafana-loki-server:7946
+      - -memberlist.rejoin-interval=30s
+      - -memberlist.dead-node-reclaim-time=30s
+      - -memberlist.abort-if-join-fails
     environment:
-      - DOCKERSWARM_SERVICE_ID={{.Service.ID}}
-      - DOCKERSWARM_SERVICE_NAME={{.Service.Name}}
-      - DOCKERSWARM_NODE_ID={{.Node.ID}}
-      - DOCKERSWARM_NODE_HOSTNAME={{.Node.Hostname}}
-      - DOCKERSWARM_TASK_ID={{.Task.ID}}
-      - DOCKERSWARM_TASK_NAME={{.Task.Name}}
-      - DOCKERSWARM_TASK_SLOT={{.Task.Slot}}
-      - DOCKERSWARM_STACK_NAMESPACE={{ index .Service.Labels "com.docker.stack.namespace"}}
-    hostname: replica-{{.Node.ID}}.grafana-loki.local
+      GF_LOKI_ADVERTISE_INTERFACE: eth0
+      GF_LOKI_DOCKER_STACK_NAMESPACE: '{{ index .Service.Labels "com.docker.stack.namespace"}}'
+      GF_LOKI_COMMON_STORAGE_RING_REPLICATION_FACTOR:
+    hostname: replica-{{.Node.ID}}.grafana-loki-internal
     networks:
       grafana:
     configs:
+      - source: grafana-loki-docker-entrypoint-shim.sh
+        target: /docker-entrypoint-shim.sh
+        mode: 0555
+      - source: grafana-loki-config.yaml
+        target: /etc/loki/grafana-loki-config.yaml
       - source: gf-provisioning-datasource-grafana-loki
     volumes:
-      - grafana-loki-data:/loki
+      - type: volume
+        source: grafana-loki-data
+        target: /loki
+    stop_signal: SIGTERM
     logging: *x-default-logging
     deploy: *x-deploy
 
   grafana-loki:
     image: swarmlibs/docker-task-proxy:main
     environment:
-      - TARGET_TASK_ADDR=replica-{{.Node.ID}}.grafana-loki.local:3100
+      - TARGET_TASK_ADDR=replica-{{.Node.ID}}.grafana-loki-internal:3100
     hostname: grafana-loki.local
     ports:
       - published: 3100
@@ -81,6 +92,14 @@ networks:
     external: true
 
 configs:
+  grafana-loki-docker-entrypoint-shim.sh:
+    name: grafana-loki-docker-entrypoint-shim.sh-v1
+    file: ./docker-entrypoint-shim.sh
+  grafana-loki-config.yaml:
+    name: grafana-loki-config.yaml-v1
+    file: ./grafana-loki-config.yaml
+
+  # Grafana datasource provisioning
   gf-provisioning-datasource-grafana-loki:
     name: gf-provisioning-datasource-grafana-loki-v1
     file: ./grafana/grafana-loki.yml
