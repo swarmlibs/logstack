@@ -10,10 +10,10 @@ make: docker-stack.yml
 docker-stack.yml:
 	@mkdir -p _tmp
 	$(DOCKER_STACK_CONFIG) $(DOCKER_STACK_CONFIG_ARGS) -c grafana-loki/docker-stack.yml > _tmp/grafana-loki.yml
-	$(DOCKER_STACK_CONFIG) $(DOCKER_STACK_CONFIG_ARGS) -c grafana-loki-promtail/docker-stack.yml > _tmp/grafana-loki-promtail.yml
+	$(DOCKER_STACK_CONFIG) $(DOCKER_STACK_CONFIG_ARGS) -c promtail/docker-stack.yml > _tmp/promtail.yml
 	$(DOCKER_STACK_CONFIG) $(DOCKER_STACK_CONFIG_ARGS) \
 		-c _tmp/grafana-loki.yml \
-		-c _tmp/grafana-loki-promtail.yml \
+		-c _tmp/promtail.yml \
 	> docker-stack.yml
 	@rm -rf _tmp
 	@sed "s|$(PWD)/||g" docker-stack.yml > docker-stack.yml.tmp

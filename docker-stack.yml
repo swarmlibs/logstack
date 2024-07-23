@@ -137,12 +137,12 @@ configs:
     file: grafana-loki/grafana-loki/docker-entrypoint-shim.sh
   prometheus-promtail:
     name: prometheus-promtail-v1
-    file: grafana-loki-promtail/prometheus/promtail.yml
+    file: promtail/prometheus/promtail.yml
     labels:
       io.prometheus.scrape_config: "true"
   promtail-config.yaml:
     name: promtail-config.yaml-v1
-    file: grafana-loki-promtail/configs/promtail-config.yaml
+    file: promtail/configs/promtail-config.yaml
 x-default-logging:
   driver: json-file
   options:
