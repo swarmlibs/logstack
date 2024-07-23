@@ -64,21 +64,30 @@ services:
     ports:
     - target: 80
       published: 3100
-  promtail:
+  grafana-loki-promtail:
+    command:
+    - -ec
+    - /usr/bin/promtail -server.enable-runtime-reload -config.expand-env=true -config.file=/etc/promtail/promtail-config.yaml
     configs:
+    - source: promtail-config.yaml.tmpl
+      target: /etc/promtail/promtail-config.yaml
     - source: prometheus-promtail
     deploy:
       mode: global
       labels:
         io.prometheus.dockerswarm-services.should_be_probed: "false"
         io.prometheus.dockerswarm-tasks.should_be_scraped: "false"
-        io.prometheus.role: promtail
+        io.prometheus.role: grafana-loki-promtail
       placement:
         max_replicas_per_node: 1
+    entrypoint:
+    - /bin/sh
     environment:
-      GF_LOKI_HOST: grafana-loki.local
-    hostname: replica-{{.Task.Slot}}.promtail.local
-    image: swarmlibs/promtail:main
+      PROMTAIL_CLIENT_TENANT_ID: ${PROMTAIL_CLIENT_TENANT_ID:-fake}
+      PROMTAIL_CLIENT_URL: ${PROMTAIL_CLIENT_URL:-http://grafana-loki.local/loki/api/v1/push}
+      PROMTAIL_ENABLE_TRACING: ${PROMTAIL_ENABLE_TRACING:-false}
+    hostname: replica-{{.Node.ID}}.promtail.local
+    image: grafana/promtail:2.9.9
     logging:
       driver: json-file
       options:
@@ -118,9 +127,12 @@ configs:
       io.grafana.provisioning.datasource: "true"
   prometheus-promtail:
     name: prometheus-promtail-v1
-    file: promtail/prometheus/promtail.yml
+    file: grafana-loki-promtail/prometheus/promtail.yml
     labels:
       io.prometheus.scrape_config: "true"
+  promtail-config.yaml.tmpl:
+    name: promtail-config.yaml.tmpl-v1
+    file: grafana-loki-promtail/configs/promtail-config.yaml.tmpl
 x-default-logging:
   driver: json-file
   options:
