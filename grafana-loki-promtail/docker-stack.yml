@@ -18,9 +18,9 @@ services:
     entrypoint: /bin/sh
     command: -ec "/usr/bin/promtail -server.enable-runtime-reload -config.expand-env=true -config.file=/etc/promtail/promtail-config.yaml"
     environment:
-      - PROMTAIL_ENABLE_TRACING=${PROMTAIL_ENABLE_TRACING:-false}
-      - PROMTAIL_CLIENT_URL=${PROMTAIL_CLIENT_URL:-http://grafana-loki.local/loki/api/v1/push}
-      - PROMTAIL_CLIENT_TENANT_ID=${PROMTAIL_CLIENT_TENANT_ID:-fake}
+      PROMTAIL_ENABLE_TRACING:
+      PROMTAIL_CLIENT_URL:
+      PROMTAIL_CLIENT_TENANT_ID:
     deploy:
       mode: global
       placement:
@@ -43,7 +43,7 @@ services:
         aliases:
           - promtail.local
     configs:
-      - source: promtail-config.yaml.tmpl
+      - source: promtail-config.yaml
         target: /etc/promtail/promtail-config.yaml
       - source: prometheus-promtail
     volumes:
@@ -56,9 +56,9 @@ services:
         target: /promtail
 
 configs:
-  promtail-config.yaml.tmpl:
-    name: promtail-config.yaml.tmpl-v1
-    file: ./configs/promtail-config.yaml.tmpl
+  promtail-config.yaml:
+    name: promtail-config.yaml-v1
+    file: ./configs/promtail-config.yaml
 
   # Prometheus scrape config
   prometheus-promtail:
