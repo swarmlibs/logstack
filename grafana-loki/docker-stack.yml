@@ -78,8 +78,6 @@ services:
       labels:
         io.prometheus.enabled: "true"
         io.prometheus.job_name: "loki"
-volumes:
-  grafana-loki-data:
 
 networks:
   grafana:
@@ -91,13 +89,19 @@ networks:
     name: prometheus_gwnetwork
     external: true
 
+volumes:
+  grafana-loki-data:
+
 configs:
+  # Custom docker-entrypoint.sh for Grafana Loki running in Docker Swarm
   grafana-loki-docker-entrypoint-shim.sh:
     name: grafana-loki-docker-entrypoint-shim.sh-v1
-    file: ./docker-entrypoint-shim.sh
+    file: ./grafana-loki/docker-entrypoint-shim.sh
+
+  # Grafana Loki configuration
   grafana-loki-config.yaml:
     name: grafana-loki-config.yaml-v1
-    file: ./grafana-loki-config.yaml
+    file: ./grafana-loki/grafana-loki-config.yaml
 
   # Grafana datasource provisioning
   gf-provisioning-datasource-grafana-loki:

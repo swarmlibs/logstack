@@ -131,10 +131,10 @@ configs:
       io.grafana.provisioning.datasource: "true"
   grafana-loki-config.yaml:
     name: grafana-loki-config.yaml-v1
-    file: grafana-loki/grafana-loki-config.yaml
+    file: grafana-loki/grafana-loki/grafana-loki-config.yaml
   grafana-loki-docker-entrypoint-shim.sh:
     name: grafana-loki-docker-entrypoint-shim.sh-v1
-    file: grafana-loki/docker-entrypoint-shim.sh
+    file: grafana-loki/grafana-loki/docker-entrypoint-shim.sh
   prometheus-promtail:
     name: prometheus-promtail-v1
     file: grafana-loki-promtail/prometheus/promtail.yml
