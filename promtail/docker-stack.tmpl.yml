@@ -18,9 +18,9 @@ services:
     entrypoint: /bin/sh
     command: -ec "/usr/bin/promtail -config.expand-env=true -config.file=/etc/promtail/promtail-config.yaml -server.enable-runtime-reload"
     environment:
-      PROMTAIL_ENABLE_TRACING:
-      PROMTAIL_CLIENT_URL:
-      PROMTAIL_CLIENT_TENANT_ID:
+      PROMTAIL_ENABLE_TRACING: $${PROMTAIL_ENABLE_TRACING}
+      PROMTAIL_CLIENT_URL: $${PROMTAIL_CLIENT_URL}
+      PROMTAIL_CLIENT_TENANT_ID: $${PROMTAIL_CLIENT_TENANT_ID}
     # ports:
     #   - published: 9080
     #     target: 9080

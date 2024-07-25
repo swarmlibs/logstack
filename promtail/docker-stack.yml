@@ -20,9 +20,9 @@ services:
     entrypoint:
     - /bin/sh
     environment:
-      PROMTAIL_CLIENT_TENANT_ID: null
-      PROMTAIL_CLIENT_URL: null
-      PROMTAIL_ENABLE_TRACING: null
+      PROMTAIL_CLIENT_TENANT_ID: ${PROMTAIL_CLIENT_TENANT_ID}
+      PROMTAIL_CLIENT_URL: ${PROMTAIL_CLIENT_URL}
+      PROMTAIL_ENABLE_TRACING: ${PROMTAIL_ENABLE_TRACING}
     hostname: replica-{{.Node.ID}}.promtail.local
     image: grafana/promtail:2.9.9
     logging:

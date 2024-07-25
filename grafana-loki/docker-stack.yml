@@ -68,7 +68,7 @@ services:
     - /docker-entrypoint-shim.sh
     environment:
       GF_LOKI_ADVERTISE_INTERFACE: eth0
-      GF_LOKI_COMMON_STORAGE_RING_REPLICATION_FACTOR: null
+      GF_LOKI_COMMON_STORAGE_RING_REPLICATION_FACTOR: ${GF_LOKI_COMMON_STORAGE_RING_REPLICATION_FACTOR}
       GF_LOKI_DOCKER_STACK_NAMESPACE: '{{ index .Service.Labels "com.docker.stack.namespace"}}'
     hostname: replica-{{.Node.ID}}.grafana-loki-internal
     image: grafana/loki:2.9.9
