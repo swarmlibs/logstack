@@ -46,6 +46,22 @@ services:
     - source: gf-provisioning-datasource-grafana-loki
     deploy:
       replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 30s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.1
+      rollback_config:
+        parallelism: 1
+        delay: 30s
+        failure_action: rollback
+        monitor: 15s
+        max_failure_ratio: 0.1
+      restart_policy:
+        condition: any
+        delay: 30s
+        window: 15s
       placement:
         max_replicas_per_node: 1
     entrypoint:
@@ -123,23 +139,23 @@ volumes:
 configs:
   gf-provisioning-datasource-grafana-loki:
     name: gf-provisioning-datasource-grafana-loki-v1
-    file: grafana-loki/grafana/grafana-loki.yml
+    file: ./grafana-loki/grafana/grafana-loki.yml
     labels:
       io.grafana.provisioning.datasource: "true"
   grafana-loki-config.yaml:
     name: grafana-loki-config.yaml-v1
-    file: grafana-loki/grafana-loki/grafana-loki-config.yaml
+    file: ./grafana-loki/grafana-loki/grafana-loki-config.yaml
   grafana-loki-docker-entrypoint-shim.sh:
     name: grafana-loki-docker-entrypoint-shim.sh-v1
-    file: grafana-loki/grafana-loki/docker-entrypoint-shim.sh
+    file: ./grafana-loki/grafana-loki/docker-entrypoint-shim.sh
   prometheus-promtail:
     name: prometheus-promtail-v1
-    file: promtail/prometheus/promtail.yml
+    file: ./promtail/prometheus/promtail.yml
     labels:
       io.prometheus.scrape_config: "true"
   promtail-config.yaml:
     name: promtail-config.yaml-v1
-    file: promtail/promtail/promtail-config.yaml
+    file: ./promtail/promtail/promtail-config.yaml
 x-default-logging:
   driver: json-file
   options:

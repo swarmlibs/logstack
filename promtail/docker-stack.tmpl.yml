@@ -1,0 +1,76 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/swarmlibs/dockerstack-schema/main/schema/dockerstack-spec.json
+
+x-default-logging: &x-default-logging
+  options:
+    max-size: "12m"
+    max-file: "5"
+  driver: json-file
+
+services:
+
+  # ====================================================
+  # Loki Promtail
+  # https://github.com/grafana/loki
+  # ====================================================
+
+  promtail:
+    image: ${LOGSTACK_PROMTAIL_VERSION}
+    entrypoint: /bin/sh
+    command: -ec "/usr/bin/promtail -config.expand-env=true -config.file=/etc/promtail/promtail-config.yaml -server.enable-runtime-reload"
+    environment:
+      PROMTAIL_ENABLE_TRACING:
+      PROMTAIL_CLIENT_URL:
+      PROMTAIL_CLIENT_TENANT_ID:
+    # ports:
+    #   - published: 9080
+    #     target: 9080
+    #     mode: host
+    networks:
+      logstack_gwnetwork:
+      prometheus_gwnetwork:
+    hostname: replica-{{.Node.ID}}.promtail.local
+    configs:
+      - source: promtail-config.yaml
+        target: /etc/promtail/promtail-config.yaml
+      - source: prometheus-promtail
+    volumes:
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+        read_only: true
+      - type: volume
+        source: promtail-data
+        target: /promtail
+    logging: *x-default-logging
+    deploy:
+      mode: global
+      placement:
+        max_replicas_per_node: 1
+      labels:
+        io.prometheus.role: "grafana-loki-promtail"
+        io.prometheus.dockerswarm-tasks.should_be_scraped: "false"
+        io.prometheus.dockerswarm-services.should_be_probed: "false"
+
+networks:
+  logstack_gwnetwork:
+    name: logstack_gwnetwork
+    external: true
+  prometheus_gwnetwork:
+    name: prometheus_gwnetwork
+    external: true
+
+volumes:
+  promtail-data:
+
+configs:
+  # Promtail config
+  promtail-config.yaml:
+    name: promtail-config.yaml-v1
+    file: ./promtail/promtail-config.yaml
+
+  # Prometheus scrape config
+  prometheus-promtail:
+    name: prometheus-promtail-v1
+    file: ./prometheus/promtail.yml
+    labels:
+      - "io.prometheus.scrape_config=true"
