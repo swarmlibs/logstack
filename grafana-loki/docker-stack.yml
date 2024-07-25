@@ -58,7 +58,24 @@ services:
         target: /loki
     stop_signal: SIGTERM
     logging: *x-default-logging
-    deploy: *x-deploy
+    deploy: 
+      <<: *x-deploy
+      restart_policy:
+        condition: any
+        delay: 30s
+        window: 15s
+      rollback_config:
+        parallelism: 1
+        failure_action: rollback
+        delay: 30s
+        monitor: 15s
+        max_failure_ratio: 0.1
+      update_config:
+        parallelism: 1
+        failure_action: rollback
+        delay: 30s
+        monitor: 15s
+        max_failure_ratio: 0.1
 
   grafana-loki:
     image: swarmlibs/docker-task-proxy:main
