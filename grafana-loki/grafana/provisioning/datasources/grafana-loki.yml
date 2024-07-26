@@ -25,3 +25,5 @@ datasources:
     version: 1
     isDefault: false
     editable: false
+    jsonData:
+      manageAlerts: false
