@@ -160,7 +160,7 @@
   "refresh": "5s",
   "schemaVersion": 39,
   "tags": [
-    "promstack",
+    "logstack",
     "dockerswarm-services",
     "grafana-loki"
   ],
@@ -278,8 +278,8 @@
   },
   "timepicker": {},
   "timezone": "browser",
-  "title": "Docker Swarm Service Logs",
-  "uid": "promstack-dockerswarm-services-logs",
+  "title": "Logstack - Docker Swarm Service Logs",
+  "uid": "logstack-dockerswarm-services-logs",
   "version": 1,
   "weekStart": ""
 }

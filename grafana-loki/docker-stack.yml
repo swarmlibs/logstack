@@ -2,7 +2,7 @@ version: "3.12"
 services:
   grafana-loki:
     configs:
-    - source: gf-dashboard-dockerswarm-services-logs
+    - source: gf-dashboard-logstack-dockerswarm-services-logs
     - source: gf-provisioning-datasource-grafana-loki
     depends_on:
     - loki
@@ -99,9 +99,9 @@ networks:
 volumes:
   grafana-loki-data: {}
 configs:
-  gf-dashboard-dockerswarm-services-logs:
-    name: gf-dashboard-dockerswarm-services-logs-v1
-    file: ./grafana/dashboards/dockerswarm-services-logs.json
+  gf-dashboard-logstack-dockerswarm-services-logs:
+    name: gf-dashboard-logstack-dockerswarm-services-logs-v1
+    file: ./grafana/dashboards/logstack-dockerswarm-services-logs.json
     labels:
       io.grafana.dashboard: "true"
   gf-provisioning-datasource-grafana-loki:

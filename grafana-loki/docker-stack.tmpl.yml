@@ -89,7 +89,7 @@ services:
       logstack_gwnetwork:
       prometheus_gwnetwork:
     configs:
-      - source: gf-dashboard-dockerswarm-services-logs
+      - source: gf-dashboard-logstack-dockerswarm-services-logs
       - source: gf-provisioning-datasource-grafana-loki
     depends_on:
       - loki
@@ -125,9 +125,9 @@ configs:
     file: ./grafana-loki/grafana-loki-config.yaml
 
   # Grafana dashboards and datasources provisioning
-  gf-dashboard-dockerswarm-services-logs:
-    name: gf-dashboard-dockerswarm-services-logs-v1
-    file: ./grafana/dashboards/dockerswarm-services-logs.json
+  gf-dashboard-logstack-dockerswarm-services-logs:
+    name: gf-dashboard-logstack-dockerswarm-services-logs-v1
+    file: ./grafana/dashboards/logstack-dockerswarm-services-logs.json
     labels: [ "io.grafana.dashboard=true" ]
   gf-provisioning-datasource-grafana-loki:
     name: gf-provisioning-datasource-grafana-loki-v1
