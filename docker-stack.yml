@@ -1,6 +1,9 @@
 version: "3.12"
 services:
   grafana-loki:
+    configs:
+    - source: gf-dashboard-dockerswarm-services-logs
+    - source: gf-provisioning-datasource-grafana-loki
     depends_on:
     - loki
     deploy:
@@ -43,7 +46,6 @@ services:
       mode: 365
     - source: grafana-loki-config.yaml
       target: /etc/loki/grafana-loki-config.yaml
-    - source: gf-provisioning-datasource-grafana-loki
     deploy:
       replicas: 1
       update_config:
@@ -137,9 +139,14 @@ volumes:
   grafana-loki-data: {}
   promtail-data: {}
 configs:
+  gf-dashboard-dockerswarm-services-logs:
+    name: gf-dashboard-dockerswarm-services-logs-v1
+    file: ./grafana-loki/grafana/dashboards/dockerswarm-services-logs.json
+    labels:
+      io.grafana.dashboard: "true"
   gf-provisioning-datasource-grafana-loki:
     name: gf-provisioning-datasource-grafana-loki-v1
-    file: ./grafana-loki/grafana/grafana-loki.yml
+    file: ./grafana-loki/grafana/provisioning/datasources/grafana-loki.yml
     labels:
       io.grafana.provisioning.datasource: "true"
   grafana-loki-config.yaml:

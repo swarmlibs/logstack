@@ -49,7 +49,6 @@ services:
         mode: 0555
       - source: grafana-loki-config.yaml
         target: /etc/loki/grafana-loki-config.yaml
-      - source: gf-provisioning-datasource-grafana-loki
     volumes:
       - type: volume
         source: grafana-loki-data
@@ -87,6 +86,9 @@ services:
       grafana:
       logstack_gwnetwork:
       prometheus_gwnetwork:
+    configs:
+      - source: gf-dashboard-dockerswarm-services-logs
+      - source: gf-provisioning-datasource-grafana-loki
     depends_on:
       - loki
     logging: *x-default-logging
@@ -120,9 +122,13 @@ configs:
     name: grafana-loki-config.yaml-v1
     file: ./grafana-loki/grafana-loki-config.yaml
 
-  # Grafana datasource provisioning
+  # Grafana dashboards and datasources provisioning
+  gf-dashboard-dockerswarm-services-logs:
+    name: gf-dashboard-dockerswarm-services-logs-v1
+    file: ./grafana/dashboards/dockerswarm-services-logs.json
+    labels: [ "io.grafana.dashboard=true" ]
   gf-provisioning-datasource-grafana-loki:
     name: gf-provisioning-datasource-grafana-loki-v1
-    file: ./grafana/grafana-loki.yml
+    file: ./grafana/provisioning/datasources/grafana-loki.yml
     labels:
       - "io.grafana.provisioning.datasource=true"
