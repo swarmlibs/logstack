@@ -15,7 +15,7 @@ services:
         constraints:
         - node.labels.services.logstack_grafana_loki_server == true
     environment:
-      TARGET_TASK_ADDR: replica-{{.Node.ID}}.grafana-loki-internal:3100
+      TARGET_TASK_ADDR: grafana-loki-internal:3100
     hostname: grafana-loki.local
     image: swarmlibs/docker-task-proxy:main
     logging:
@@ -72,7 +72,7 @@ services:
       GF_LOKI_ADVERTISE_INTERFACE: eth0
       GF_LOKI_COMMON_STORAGE_RING_REPLICATION_FACTOR: ${GF_LOKI_COMMON_STORAGE_RING_REPLICATION_FACTOR}
       GF_LOKI_DOCKER_STACK_NAMESPACE: '{{ index .Service.Labels "com.docker.stack.namespace"}}'
-    hostname: replica-{{.Node.ID}}.grafana-loki-internal
+    hostname: replica-{{.Task.Slot}}.grafana-loki-internal
     image: grafana/loki:2.9.9
     logging:
       driver: json-file
@@ -80,7 +80,9 @@ services:
         max-file: "5"
         max-size: 12m
     networks:
-      grafana: null
+      grafana:
+        aliases:
+        - grafana-loki-internal
     stop_signal: SIGTERM
     volumes:
     - type: volume

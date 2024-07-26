@@ -40,9 +40,11 @@ services:
       GF_LOKI_ADVERTISE_INTERFACE: eth0
       GF_LOKI_DOCKER_STACK_NAMESPACE: '{{ index .Service.Labels "com.docker.stack.namespace"}}'
       GF_LOKI_COMMON_STORAGE_RING_REPLICATION_FACTOR: $${GF_LOKI_COMMON_STORAGE_RING_REPLICATION_FACTOR}
-    hostname: replica-{{.Node.ID}}.grafana-loki-internal
+    hostname: replica-{{.Task.Slot}}.grafana-loki-internal
     networks:
       grafana:
+        aliases:
+          - grafana-loki-internal
     configs:
       - source: grafana-loki-docker-entrypoint-shim.sh
         target: /docker-entrypoint-shim.sh
@@ -77,7 +79,7 @@ services:
   grafana-loki:
     image: swarmlibs/docker-task-proxy:main
     environment:
-      - TARGET_TASK_ADDR=replica-{{.Node.ID}}.grafana-loki-internal:3100
+      - TARGET_TASK_ADDR=grafana-loki-internal:3100
     hostname: grafana-loki.local
     ports:
       - published: 3100
