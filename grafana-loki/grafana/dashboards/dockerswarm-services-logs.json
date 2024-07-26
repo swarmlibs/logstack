@@ -280,6 +280,6 @@
   "timezone": "browser",
   "title": "Docker Swarm Service Logs",
   "uid": "promstack-dockerswarm-services-logs",
-  "version": 4,
+  "version": 1,
   "weekStart": ""
 }
