@@ -272,13 +272,13 @@
     ]
   },
   "time": {
-    "from": "2024-07-26T09:09:40.967Z",
-    "to": "2024-07-26T09:09:43.033Z"
+    "from": "now-15m",
+    "to": "now"
   },
   "timepicker": {},
   "timezone": "browser",
   "title": "Docker Swarm Service Logs",
   "uid": "promstack-dockerswarm-services-logs",
-  "version": 2,
+  "version": 3,
   "weekStart": ""
 }
