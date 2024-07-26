@@ -7,12 +7,12 @@ server:
   log_format: logfmt
 
 common:
+  replication_factor: ${GF_LOKI_COMMON_STORAGE_RING_REPLICATION_FACTOR:-1}
   path_prefix: /loki
   storage:
     filesystem:
       chunks_directory: /loki/chunks
       rules_directory: /loki/rules
-  replication_factor: ${GF_LOKI_COMMON_STORAGE_RING_REPLICATION_FACTOR:-1}
 
 query_range:
   results_cache:
