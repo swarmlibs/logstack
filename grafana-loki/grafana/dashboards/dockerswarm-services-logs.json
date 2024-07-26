@@ -28,7 +28,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
+            "mode": "fixed"
           },
           "custom": {
             "axisBorderShow": false,
@@ -84,7 +84,7 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 9,
+        "h": 7,
         "w": 24,
         "x": 0,
         "y": 0
@@ -110,6 +110,7 @@
           },
           "editorMode": "code",
           "expr": "sum (count_over_time({namespace=~\"$namespace\", service=~\"$service\", task=~\"$task\"}[$__auto]))",
+          "legendFormat": "logs",
           "queryType": "range",
           "refId": "A"
         }
@@ -126,7 +127,7 @@
         "h": 20,
         "w": 24,
         "x": 0,
-        "y": 9
+        "y": 7
       },
       "id": 1,
       "options": {
@@ -156,7 +157,7 @@
       "type": "logs"
     }
   ],
-  "refresh": "",
+  "refresh": "5s",
   "schemaVersion": 39,
   "tags": [
     "promstack",
@@ -279,6 +280,6 @@
   "timezone": "browser",
   "title": "Docker Swarm Service Logs",
   "uid": "promstack-dockerswarm-services-logs",
-  "version": 3,
+  "version": 4,
   "weekStart": ""
 }
