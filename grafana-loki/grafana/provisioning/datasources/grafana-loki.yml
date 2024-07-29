@@ -1,15 +1,16 @@
 apiVersion: 1
 
 deleteDatasources:
-  - name: Grafana Loki (Logstack)
+  - name: Logstack - Grafana Loki
     orgId: 1
-  - name: Grafana Loki PromQL (Logstack)
+  - name: Logstack - Grafana Loki PromQL
     orgId: 1
 
 prune: true
 
 datasources:
-  - name: Grafana Loki (Logstack)
+  - uid: logstack-grafana-loki
+    name: Logstack - Grafana Loki
     type: loki
     access: proxy
     orgId: 1
@@ -17,7 +18,8 @@ datasources:
     version: 1
     isDefault: false
     editable: false
-  - name: Grafana Loki PromQL (Logstack)
+  - uid: logstack-grafana-loki-promql
+    name: Logstack - Grafana Loki PromQL
     type: prometheus
     access: proxy
     orgId: 1
