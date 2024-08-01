@@ -80,3 +80,10 @@ scrape_configs:
         - dockerswarm_task_name
         target_label: pod
         regex: (.*)
+
+      # ================================================================================
+      # Grafana Loki log volume support
+      # ================================================================================
+      - source_labels:
+        - __meta_docker_container_label_com_docker_swarm_service_name
+        target_label: service_name

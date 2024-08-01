@@ -39,6 +39,9 @@ storage_config:
     active_index_directory: /loki/tsdb-index
     cache_location: /loki/tsdb-cache
 
+limits_config:
+  volume_enabled: true
+
 # ruler:
 #   alertmanager_url: http://localhost:9093
 
