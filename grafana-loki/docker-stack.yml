@@ -1,6 +1,11 @@
 version: "3.12"
 services:
   grafana-loki:
+    command:
+    - caddy
+    - reverse-proxy
+    - --from=:3100
+    - --to=grafana-loki-internal:3100
     configs:
     - source: gf-dashboard-logstack-dockerswarm-services-logs
     - source: gf-provisioning-datasource-grafana-loki
@@ -14,10 +19,8 @@ services:
       placement:
         constraints:
         - node.labels.services.logstack_grafana_loki_server == true
-    environment:
-      TARGET_TASK_ADDR: grafana-loki-internal:3100
     hostname: grafana-loki.local
-    image: swarmlibs/docker-task-proxy:main
+    image: caddy:alpine
     logging:
       driver: json-file
       options:
@@ -28,7 +31,7 @@ services:
       logstack_gwnetwork: null
       prometheus_gwnetwork: null
     ports:
-    - target: 80
+    - target: 3100
       published: 3100
   grafana-loki-server:
     command:

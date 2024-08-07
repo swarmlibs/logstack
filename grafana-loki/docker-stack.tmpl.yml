@@ -77,13 +77,12 @@ services:
         max_failure_ratio: 0.1
 
   grafana-loki:
-    image: swarmlibs/docker-task-proxy:main
-    environment:
-      - TARGET_TASK_ADDR=grafana-loki-internal:3100
+    image: caddy:alpine
+    command: caddy reverse-proxy --from=:3100 --to=grafana-loki-internal:3100
     hostname: grafana-loki.local
     ports:
       - published: 3100
-        target: 80
+        target: 3100
     networks:
       grafana:
       logstack_gwnetwork:
