@@ -21,10 +21,10 @@ services:
       PROMTAIL_ENABLE_TRACING: $${PROMTAIL_ENABLE_TRACING}
       PROMTAIL_CLIENT_URL: $${PROMTAIL_CLIENT_URL}
       PROMTAIL_CLIENT_TENANT_ID: $${PROMTAIL_CLIENT_TENANT_ID}
-    # ports:
-    #   - published: 9080
-    #     target: 9080
-    #     mode: host
+    ports:
+      - published: 9080
+        target: 9080
+        mode: host
     networks:
       logstack_gwnetwork:
       prometheus_gwnetwork:

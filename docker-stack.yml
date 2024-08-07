@@ -124,6 +124,10 @@ services:
     networks:
       logstack_gwnetwork: null
       prometheus_gwnetwork: null
+    ports:
+    - mode: host
+      target: 9080
+      published: 9080
     volumes:
     - type: bind
       source: /var/run/docker.sock
