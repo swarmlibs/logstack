@@ -77,9 +77,9 @@ services:
         max_failure_ratio: 0.1
 
   grafana-loki:
-    image: caddy:alpine
-    entrypoint: ["/bin/sh", "-ec"]
-    command: '"caddy reverse-proxy --from=:3100 --to=replica-$${NODE_ID}.grafana-loki-internal:3100"'
+    image: caddy:2.8-alpine
+    entrypoint: ["/bin/sh"]
+    command: -ec 'caddy reverse-proxy --from=:3100 --to=replica-$$$${NODE_ID}.grafana-loki-internal:3100'
     environment:
       NODE_ID: '{{.Node.ID}}'
     hostname: grafana-loki.local
@@ -95,6 +95,11 @@ services:
       - source: gf-provisioning-datasource-grafana-loki
     depends_on:
       - loki
+    healthcheck:
+      test: ["CMD", "wget", "-q", "http://localhost:3100/ready"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
     logging: *x-default-logging
     deploy:
       <<: *x-grafana-subservice-deploy
