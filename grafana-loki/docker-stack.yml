@@ -26,9 +26,9 @@ services:
       test:
       - CMD-SHELL
       - wget -qO - --tries=1 --spider http://127.0.0.1:3100/ready || exit 1
-      timeout: 5s
-      interval: 15s
-      retries: 5
+      timeout: 10s
+      interval: 30s
+      retries: 3
       start_period: 30s
     image: caddy:2.8-alpine
     logging:
@@ -90,9 +90,9 @@ services:
       test:
       - CMD-SHELL
       - wget -qO - --tries=1 --spider http://127.0.0.1:3100/ready || exit 1
-      timeout: 5s
-      interval: 15s
-      retries: 5
+      timeout: 10s
+      interval: 30s
+      retries: 3
       start_period: 30s
     image: grafana/loki:2.9.9
     logging:
@@ -150,3 +150,8 @@ x-grafana-subservice-deploy:
   placement:
     constraints:
     - node.labels.services.logstack_grafana_loki_server == true
+x-healthcheck:
+  interval: 30s
+  retries: 3
+  start_period: 30s
+  timeout: 10s

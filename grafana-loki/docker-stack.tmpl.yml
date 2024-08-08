@@ -11,6 +11,12 @@ x-deploy: &x-deploy
   placement:
     max_replicas_per_node: 1
 
+x-healthcheck: &x-healthcheck
+  interval: 30s
+  timeout: 10s
+  retries: 3
+  start_period: 30s
+
 x-grafana-subservice-deploy: &x-grafana-subservice-deploy
   mode: global
   placement:
@@ -56,11 +62,8 @@ services:
         source: grafana-loki-data
         target: /loki
     healthcheck:
+      <<: *x-healthcheck
       test: wget -qO - --tries=1 --spider http://127.0.0.1:3100/ready || exit 1
-      interval: 15s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
     stop_signal: SIGTERM
     logging: *x-default-logging
     deploy: 
@@ -102,11 +105,8 @@ services:
     depends_on:
       - loki
     healthcheck:
+      <<: *x-healthcheck
       test: wget -qO - --tries=1 --spider http://127.0.0.1:3100/ready || exit 1
-      interval: 15s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
     logging: *x-default-logging
     deploy:
       <<: *x-grafana-subservice-deploy
