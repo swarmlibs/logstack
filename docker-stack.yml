@@ -2,10 +2,7 @@ version: "3.12"
 services:
   grafana-loki:
     command:
-    - caddy
-    - reverse-proxy
-    - --from=:3100
-    - --to=grafana-loki-internal:3100
+    - caddy reverse-proxy --from=:3100 --to=replica-${NODE_ID}.grafana-loki-internal:3100
     configs:
     - source: gf-dashboard-logstack-dockerswarm-services-logs
     - source: gf-provisioning-datasource-grafana-loki
@@ -19,6 +16,11 @@ services:
       placement:
         constraints:
         - node.labels.services.logstack_grafana_loki_server == true
+    entrypoint:
+    - /bin/sh
+    - -ec
+    environment:
+      NODE_ID: '{{.Node.ID}}'
     hostname: grafana-loki.local
     image: caddy:alpine
     logging:
@@ -75,7 +77,7 @@ services:
       GF_LOKI_ADVERTISE_INTERFACE: eth0
       GF_LOKI_COMMON_STORAGE_RING_REPLICATION_FACTOR: ${GF_LOKI_COMMON_STORAGE_RING_REPLICATION_FACTOR}
       GF_LOKI_DOCKER_STACK_NAMESPACE: '{{ index .Service.Labels "com.docker.stack.namespace"}}'
-    hostname: replica-{{.Task.Slot}}.grafana-loki-internal
+    hostname: replica-{{.Node.ID}}.grafana-loki-internal
     image: grafana/loki:2.9.9
     logging:
       driver: json-file

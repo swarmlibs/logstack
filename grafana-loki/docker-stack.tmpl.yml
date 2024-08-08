@@ -40,7 +40,7 @@ services:
       GF_LOKI_ADVERTISE_INTERFACE: eth0
       GF_LOKI_DOCKER_STACK_NAMESPACE: '{{ index .Service.Labels "com.docker.stack.namespace"}}'
       GF_LOKI_COMMON_STORAGE_RING_REPLICATION_FACTOR: $${GF_LOKI_COMMON_STORAGE_RING_REPLICATION_FACTOR}
-    hostname: replica-{{.Task.Slot}}.grafana-loki-internal
+    hostname: replica-{{.Node.ID}}.grafana-loki-internal
     networks:
       grafana:
         aliases:
@@ -78,7 +78,10 @@ services:
 
   grafana-loki:
     image: caddy:alpine
-    command: caddy reverse-proxy --from=:3100 --to=grafana-loki-internal:3100
+    entrypoint: ["/bin/sh", "-ec"]
+    command: '"caddy reverse-proxy --from=:3100 --to=replica-$${NODE_ID}.grafana-loki-internal:3100"'
+    environment:
+      NODE_ID: '{{.Node.ID}}'
     hostname: grafana-loki.local
     ports:
       - published: 3100
