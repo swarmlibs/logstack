@@ -105,6 +105,7 @@ services:
       prometheus_gwnetwork:
         aliases:
           - grafana-loki-gateway.internal
+          - grafana-loki-gateway.svc.cluster.local
     hostname: replica-{{.Node.ID}}.grafana-loki-gateway.local
     configs:
       - source: gf-dashboard-logstack-dockerswarm-services-logs

@@ -112,6 +112,7 @@ services:
       prometheus_gwnetwork:
         aliases:
         - grafana-loki-gateway.internal
+        - grafana-loki-gateway.svc.cluster.local
     ports:
     - target: 3100
       published: 3100
