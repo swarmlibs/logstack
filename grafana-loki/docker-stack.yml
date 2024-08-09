@@ -51,7 +51,7 @@ services:
       interval: 30s
       retries: 3
       start_period: 30s
-    image: grafana/loki:2.9.9
+    image: docker.io/grafana/loki:2.9.9
     logging:
       driver: json-file
       options:
