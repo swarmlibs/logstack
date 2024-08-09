@@ -17,6 +17,7 @@ Like Promstack, but for logs. Includes (Grafana Loki and Promtail)
   - [Deploy stack](#deploy-stack)
   - [Remove stack](#remove-stack)
   - [Verify deployment](#verify-deployment)
+- [Services and Ports](#services-and-ports)
 
 ## Concepts
 
@@ -113,6 +114,14 @@ You can continously monitor the deployment by running the following command:
 watch docker service ls --filter label=com.docker.stack.namespace=logstack
 ```
 
+## Services and Ports
+
+The following services and ports are exposed by the stack:
+
+| Service              | Port    | Ingress DNS                              |
+| -------------------- | ------- | ---------------------------------------- |
+| Grafana Loki Gateway | `3100`  | `grafana-loki-gateway.svc.cluster.local` |
+| Promtail             | `19080` |                                          |
 
 ---
 

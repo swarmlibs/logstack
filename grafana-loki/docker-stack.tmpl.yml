@@ -30,7 +30,7 @@ services:
   # https://github.com/grafana/loki
   # ====================================================
 
-  grafana-loki-server:
+  grafana-loki:
     image: ${LOGSTACK_GRAFANA_LOKI_VERSION}
     entrypoint: ["/docker-entrypoint-shim.sh"]
     command:
@@ -38,7 +38,7 @@ services:
       - -config.file=/etc/loki/grafana-loki-config.yaml
       - -common.storage.ring.store=memberlist
       - -memberlist.bind-port=7946
-      - -memberlist.join=dns+tasks.grafana-loki-server:7946
+      - -memberlist.join=dns+tasks.grafana-loki:7946
       - -memberlist.rejoin-interval=30s
       - -memberlist.dead-node-reclaim-time=30s
       - -memberlist.abort-if-join-fails
@@ -85,7 +85,7 @@ services:
         monitor: 15s
         max_failure_ratio: 0.1
 
-  grafana-loki:
+  grafana-loki-gateway:
     image: caddy:2.8-alpine
     entrypoint: ["/bin/sh"]
     command: -ec 'caddy reverse-proxy --from=:3100 --to=replica-$$$${NODE_ID}.grafana-loki.internal:3100'
@@ -97,14 +97,14 @@ services:
     networks:
       grafana:
         aliases:
-          - grafana-loki.svc.cluster.local
+          - grafana-loki-gateway.svc.cluster.local
       logstack_gwnetwork:
         aliases:
-          - grafana-loki.internal
+          - grafana-loki-gateway.internal
       prometheus_gwnetwork:
         aliases:
-          - grafana-loki.internal
-    hostname: replica-{{.Node.ID}}.grafana-loki.local
+          - grafana-loki-gateway.internal
+    hostname: replica-{{.Node.ID}}.grafana-loki-gateway.local
     configs:
       - source: gf-dashboard-logstack-dockerswarm-services-logs
       - source: gf-provisioning-datasource-grafana-loki

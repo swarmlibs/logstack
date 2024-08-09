@@ -2,60 +2,11 @@ version: "3.12"
 services:
   grafana-loki:
     command:
-    - -ec
-    - caddy reverse-proxy --from=:3100 --to=replica-$${NODE_ID}.grafana-loki.internal:3100
-    configs:
-    - source: gf-dashboard-logstack-dockerswarm-services-logs
-    - source: gf-provisioning-datasource-grafana-loki
-    depends_on:
-    - loki
-    deploy:
-      mode: global
-      labels:
-        io.prometheus.enabled: "true"
-        io.prometheus.job_name: loki
-      placement:
-        constraints:
-        - node.labels.services.logstack_grafana_loki_server == true
-    entrypoint:
-    - /bin/sh
-    environment:
-      NODE_ID: '{{.Node.ID}}'
-    hostname: replica-{{.Node.ID}}.grafana-loki.local
-    healthcheck:
-      test:
-      - CMD-SHELL
-      - wget -qO - --tries=1 --spider http://127.0.0.1:3100/ready || exit 1
-      timeout: 10s
-      interval: 30s
-      retries: 3
-      start_period: 30s
-    image: caddy:2.8-alpine
-    logging:
-      driver: json-file
-      options:
-        max-file: "5"
-        max-size: 12m
-    networks:
-      grafana:
-        aliases:
-        - grafana-loki.svc.cluster.local
-      logstack_gwnetwork:
-        aliases:
-        - grafana-loki.internal
-      prometheus_gwnetwork:
-        aliases:
-        - grafana-loki.internal
-    ports:
-    - target: 3100
-      published: 3100
-  grafana-loki-server:
-    command:
     - -config.expand-env
     - -config.file=/etc/loki/grafana-loki-config.yaml
     - -common.storage.ring.store=memberlist
     - -memberlist.bind-port=7946
-    - -memberlist.join=dns+tasks.grafana-loki-server:7946
+    - -memberlist.join=dns+tasks.grafana-loki:7946
     - -memberlist.rejoin-interval=30s
     - -memberlist.dead-node-reclaim-time=30s
     - -memberlist.abort-if-join-fails
@@ -115,6 +66,55 @@ services:
     - type: volume
       source: grafana-loki-data
       target: /loki
+  grafana-loki-gateway:
+    command:
+    - -ec
+    - caddy reverse-proxy --from=:3100 --to=replica-$${NODE_ID}.grafana-loki.internal:3100
+    configs:
+    - source: gf-dashboard-logstack-dockerswarm-services-logs
+    - source: gf-provisioning-datasource-grafana-loki
+    depends_on:
+    - loki
+    deploy:
+      mode: global
+      labels:
+        io.prometheus.enabled: "true"
+        io.prometheus.job_name: loki
+      placement:
+        constraints:
+        - node.labels.services.logstack_grafana_loki_server == true
+    entrypoint:
+    - /bin/sh
+    environment:
+      NODE_ID: '{{.Node.ID}}'
+    hostname: replica-{{.Node.ID}}.grafana-loki-gateway.local
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - wget -qO - --tries=1 --spider http://127.0.0.1:3100/ready || exit 1
+      timeout: 10s
+      interval: 30s
+      retries: 3
+      start_period: 30s
+    image: caddy:2.8-alpine
+    logging:
+      driver: json-file
+      options:
+        max-file: "5"
+        max-size: 12m
+    networks:
+      grafana:
+        aliases:
+        - grafana-loki-gateway.svc.cluster.local
+      logstack_gwnetwork:
+        aliases:
+        - grafana-loki-gateway.internal
+      prometheus_gwnetwork:
+        aliases:
+        - grafana-loki-gateway.internal
+    ports:
+    - target: 3100
+      published: 3100
 networks:
   grafana: {}
   logstack_gwnetwork:
