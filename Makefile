@@ -69,6 +69,13 @@ stack-networks:
 	docker network create --scope=swarm --driver=overlay --attachable logstack_gwnetwork || true
 	docker network create --scope=swarm --driver=overlay --attachable prometheus_gwnetwork || true
 stack-deploy:
+	@echo '    __                     __             __  '
+	@echo '   / /   ____  ____ ______/ /_____ ______/ /__'
+	@echo '  / /   / __ \/ __ `/ ___/ __/ __ `/ ___/ //_/'
+	@echo ' / /___/ /_/ / /_/ (__  ) /_/ /_/ / /__/ ,<   '
+	@echo '/_____/\____/\__, /____/\__/\__,_/\___/_/|_|  '
+	@echo '            /____/                            '
+	@echo "Deploying logstack stack:"
 	$(DOCKER_STACK_DEPLOY) $(DOCKER_STACK_DEPLOY_ARGS) --prune -c docker-stack.yml $(DOCKER_STACK_NAMESPACE)
 stack-upgrade:
 	$(DOCKER_STACK_DEPLOY) $(DOCKER_STACK_DEPLOY_ARGS) --prune --resolve-image always -c docker-stack.yml $(DOCKER_STACK_NAMESPACE)
