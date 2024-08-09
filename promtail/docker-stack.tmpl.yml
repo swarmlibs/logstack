@@ -28,7 +28,7 @@ services:
     networks:
       logstack_gwnetwork:
       prometheus_gwnetwork:
-    hostname: replica-{{.Node.ID}}.promtail.local
+    hostname: replica-{{.Node.ID}}.promtail.internal
     configs:
       - source: promtail-config.yaml
         target: /etc/promtail/promtail-config.yaml

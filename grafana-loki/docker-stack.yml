@@ -3,7 +3,7 @@ services:
   grafana-loki:
     command:
     - -ec
-    - caddy reverse-proxy --from=:3100 --to=replica-$${NODE_ID}.grafana-loki-internal:3100
+    - caddy reverse-proxy --from=:3100 --to=replica-$${NODE_ID}.grafana-loki.internal:3100
     configs:
     - source: gf-dashboard-logstack-dockerswarm-services-logs
     - source: gf-provisioning-datasource-grafana-loki
@@ -21,7 +21,7 @@ services:
     - /bin/sh
     environment:
       NODE_ID: '{{.Node.ID}}'
-    hostname: grafana-loki.local
+    hostname: replica-{{.Node.ID}}.grafana-loki.local
     healthcheck:
       test:
       - CMD-SHELL
@@ -37,9 +37,15 @@ services:
         max-file: "5"
         max-size: 12m
     networks:
-      grafana: null
-      logstack_gwnetwork: null
-      prometheus_gwnetwork: null
+      grafana:
+        aliases:
+        - grafana-loki.svc.cluster.local
+      logstack_gwnetwork:
+        aliases:
+        - grafana-loki.internal
+      prometheus_gwnetwork:
+        aliases:
+        - grafana-loki.internal
     ports:
     - target: 3100
       published: 3100
@@ -85,7 +91,7 @@ services:
       GF_LOKI_ADVERTISE_INTERFACE: eth0
       GF_LOKI_COMMON_STORAGE_RING_REPLICATION_FACTOR: ${GF_LOKI_COMMON_STORAGE_RING_REPLICATION_FACTOR}
       GF_LOKI_DOCKER_STACK_NAMESPACE: '{{ index .Service.Labels "com.docker.stack.namespace"}}'
-    hostname: replica-{{.Node.ID}}.grafana-loki-internal
+    hostname: replica-{{.Node.ID}}.grafana-loki.internal
     healthcheck:
       test:
       - CMD-SHELL
@@ -103,7 +109,7 @@ services:
     networks:
       grafana:
         aliases:
-        - grafana-loki-internal
+        - grafana-loki.internal
     stop_signal: SIGTERM
     volumes:
     - type: volume
