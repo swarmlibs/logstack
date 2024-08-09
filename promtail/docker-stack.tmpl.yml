@@ -1,5 +1,11 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/swarmlibs/dockerstack-schema/main/schema/dockerstack-spec.json
 
+x-healthcheck: &x-healthcheck
+  interval: 30s
+  timeout: 10s
+  retries: 3
+  start_period: 30s
+
 x-default-logging: &x-default-logging
   options:
     max-size: "12m"
@@ -41,6 +47,9 @@ services:
       - type: volume
         source: promtail-data
         target: /promtail
+    healthcheck:
+      <<: *x-healthcheck
+      test: /usr/bin/promtail -check-syntax -config.expand-env=true -config.file=/etc/promtail/promtail-config.yaml
     logging: *x-default-logging
     deploy:
       mode: global

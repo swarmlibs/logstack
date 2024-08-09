@@ -24,6 +24,14 @@ services:
       PROMTAIL_CLIENT_URL: ${PROMTAIL_CLIENT_URL}
       PROMTAIL_ENABLE_TRACING: ${PROMTAIL_ENABLE_TRACING}
     hostname: replica-{{.Node.ID}}.promtail.internal
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - promtail -check-syntax -config.expand-env -config.file=/etc/promtail/promtail-config.yaml
+      timeout: 10s
+      interval: 30s
+      retries: 3
+      start_period: 30s
     image: grafana/promtail:2.9.9
     logging:
       driver: json-file
@@ -68,3 +76,8 @@ x-default-logging:
   options:
     max-file: "5"
     max-size: 12m
+x-healthcheck:
+  interval: 30s
+  retries: 3
+  start_period: 30s
+  timeout: 10s
