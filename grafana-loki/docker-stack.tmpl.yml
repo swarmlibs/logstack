@@ -46,11 +46,9 @@ services:
       GF_LOKI_ADVERTISE_INTERFACE: eth0
       GF_LOKI_DOCKER_STACK_NAMESPACE: '{{ index .Service.Labels "com.docker.stack.namespace"}}'
       GF_LOKI_COMMON_STORAGE_RING_REPLICATION_FACTOR: $${GF_LOKI_COMMON_STORAGE_RING_REPLICATION_FACTOR}
-    hostname: replica-{{.Node.ID}}.grafana-loki.internal
+    hostname: replica-{{.Node.ID}}.loki.internal
     networks:
       grafana:
-        aliases:
-          - grafana-loki.internal
     configs:
       - source: grafana-loki-docker-entrypoint-shim.sh
         target: /docker-entrypoint-shim.sh
@@ -88,23 +86,24 @@ services:
   grafana-loki-gateway:
     image: caddy:2.8-alpine
     entrypoint: ["/bin/sh"]
-    command: -ec 'caddy reverse-proxy --from=:3100 --to=replica-$$$${NODE_ID}.grafana-loki.internal:3100'
+    command: -ec 'caddy reverse-proxy --from=:3100 --to=replica-$$$${NODE_ID}.loki.internal:3100'
     environment:
       NODE_ID: '{{.Node.ID}}'
     ports:
       - published: 3100
         target: 3100
+        protocol: tcp
     networks:
       grafana:
         aliases:
-          - grafana-loki-gateway.svc.cluster.local
+          - loki-gateway.svc.cluster.local
       logstack_gwnetwork:
         aliases:
-          - grafana-loki-gateway.internal
+          - loki-gateway.internal
       prometheus_gwnetwork:
         aliases:
-          - grafana-loki-gateway.internal
-    hostname: replica-{{.Node.ID}}.grafana-loki-gateway.local
+          - loki-gateway.internal
+    hostname: replica-{{.Node.ID}}.loki-gateway.local
     configs:
       - source: gf-dashboard-logstack-dockerswarm-services-logs
       - source: gf-provisioning-datasource-grafana-loki
