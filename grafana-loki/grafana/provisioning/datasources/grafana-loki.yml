@@ -14,7 +14,7 @@ datasources:
     type: loki
     access: proxy
     orgId: 1
-    url: http://grafana-loki.local:3100
+    url: http://grafana-loki-gateway.svc.cluster.local:3100
     version: 1
     isDefault: false
     editable: false
@@ -23,7 +23,7 @@ datasources:
     type: prometheus
     access: proxy
     orgId: 1
-    url: http://grafana-loki.local:3100/loki
+    url: http://grafana-loki-gateway.svc.cluster.local:3100/loki
     version: 1
     isDefault: false
     editable: false
