@@ -94,6 +94,7 @@ services:
     ports:
       - published: 3100
         target: 3100
+        protocol: tcp
     networks:
       grafana:
         aliases:

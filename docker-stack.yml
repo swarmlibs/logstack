@@ -115,6 +115,7 @@ services:
     ports:
     - target: 3100
       published: 3100
+      protocol: tcp
   promtail:
     command:
     - -ec
