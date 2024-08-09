@@ -75,7 +75,7 @@ stack-deploy:
 	@echo ' / /___/ /_/ / /_/ (__  ) /_/ /_/ / /__/ ,<   '
 	@echo '/_____/\____/\__, /____/\__/\__,_/\___/_/|_|  '
 	@echo '            /____/                            '
-	@echo "Deploying logstack stack:"
+	@echo "==> Deploying logstack stack:"
 	@$(DOCKER_STACK) deploy $(DOCKER_STACK_DEPLOY_ARGS) --prune -c docker-stack.yml $(DOCKER_STACK_NAMESPACE)
 stack-upgrade:
 	@$(DOCKER_STACK) deploy $(DOCKER_STACK_DEPLOY_ARGS) --prune --resolve-image always -c docker-stack.yml $(DOCKER_STACK_NAMESPACE)
