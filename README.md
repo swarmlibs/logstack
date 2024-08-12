@@ -121,7 +121,7 @@ The following services and ports are exposed by the stack:
 | Service              | Port    | Ingress DNS                              |
 | -------------------- | ------- | ---------------------------------------- |
 | Grafana Loki Gateway | `3100`  | `grafana-loki-gateway.svc.cluster.local` |
-| Promtail             | `19080` |                                          |
+| Promtail             | `9080`  |                                          |
 
 ---
 

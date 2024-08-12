@@ -44,7 +44,7 @@ services:
     ports:
     - mode: host
       target: 9080
-      published: 19080
+      published: 9080
     volumes:
     - type: bind
       source: /var/run/docker.sock

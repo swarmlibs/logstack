@@ -28,7 +28,7 @@ services:
       PROMTAIL_CLIENT_URL: $${PROMTAIL_CLIENT_URL}
       PROMTAIL_CLIENT_TENANT_ID: $${PROMTAIL_CLIENT_TENANT_ID}
     ports:
-      - published: 19080
+      - published: 9080
         target: 9080
         mode: host
     networks:
