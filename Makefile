@@ -30,7 +30,8 @@ $(1)/config:
 	cat $(1)/docker-stack.yml
 $(1)/docker-stack.yml:
 	$(DOCKER_STACK_CONFIG) -c $1/docker-stack.tmpl.yml > $1/docker-stack-config.yml
-	@sed "s|$(PWD)/$1/|./|g" $1/docker-stack-config.yml > $1/docker-stack.yml
+	@sed 's|$(PWD)/$1/|./|g' $1/docker-stack-config.yml > $1/docker-stack.yml
+	@hacks/docker-stack-sanitize.sh $1/docker-stack.yml
 $(1)/deploy:
 	$(DOCKER_STACK) deploy $(DOCKER_STACK_DEPLOY_ARGS) -c $(1)/docker-stack.yml $(DOCKER_STACK_NAMESPACE)
 $(1)/upgrade:
@@ -49,9 +50,10 @@ docker-stack.yml:
 	$(DOCKER_STACK_CONFIG) $(DOCKER_STACK_CONFIG_ARGS) \
 		-c grafana-loki/docker-stack-config.yml \
 		-c promtail/docker-stack-config.yml \
-	> docker-stack.yml.tmp
-	@sed "s|$(PWD)/|./|g" docker-stack.yml.tmp > docker-stack.yml
-	@rm docker-stack.yml.tmp
+	> docker-stack-config.yml
+	@sed 's|$(PWD)/|./|g' docker-stack-config.yml > docker-stack.yml
+	@hacks/docker-stack-sanitize.sh docker-stack.yml
+	@rm docker-stack-config.yml
 	@rm **/docker-stack-config.yml
 
 compile: \
@@ -64,7 +66,7 @@ print:
 
 clean:
 	@rm -rf docker-stack.yml || true
-	@rm -rf docker-stack.yml.tmp || true
+	@rm -rf docker-stack-config.yml || true
 	@rm -rf **/docker-stack.yml || true
 	@rm -rf **/docker-stack-config.yml || true
 
