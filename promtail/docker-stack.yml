@@ -1,13 +1,12 @@
 services:
   promtail:
     command:
-    - -ec
-    - /usr/bin/promtail -config.expand-env=true -config.file=/etc/promtail/promtail-config.yaml
-      -server.enable-runtime-reload
+      - -ec
+      - /usr/bin/promtail -config.expand-env=true -config.file=/etc/promtail/promtail-config.yaml -server.enable-runtime-reload
     configs:
-    - source: promtail-config.yaml
-      target: /etc/promtail/promtail-config.yaml
-    - source: prometheus-promtail
+      - source: promtail-config.yaml
+        target: /etc/promtail/promtail-config.yaml
+      - source: prometheus-promtail
     deploy:
       mode: global
       labels:
@@ -17,7 +16,7 @@ services:
       placement:
         max_replicas_per_node: 1
     entrypoint:
-    - /bin/sh
+      - /bin/sh
     environment:
       PROMTAIL_CLIENT_TENANT_ID: ${PROMTAIL_CLIENT_TENANT_ID}
       PROMTAIL_CLIENT_URL: ${PROMTAIL_CLIENT_URL}
@@ -25,8 +24,8 @@ services:
     hostname: replica-{{.Node.ID}}.promtail.internal
     healthcheck:
       test:
-      - CMD-SHELL
-      - /usr/bin/promtail -check-syntax -config.expand-env=true -config.file=/etc/promtail/promtail-config.yaml
+        - CMD-SHELL
+        - /usr/bin/promtail -check-syntax -config.expand-env=true -config.file=/etc/promtail/promtail-config.yaml
       timeout: 10s
       interval: 30s
       retries: 3
@@ -41,17 +40,17 @@ services:
       logstack_gwnetwork: null
       prometheus_gwnetwork: null
     ports:
-    - mode: host
-      target: 9080
-      published: 9080
+      - mode: host
+        target: 9080
+        published: 9080
     volumes:
-    - type: bind
-      source: /var/run/docker.sock
-      target: /var/run/docker.sock
-      read_only: true
-    - type: volume
-      source: promtail-data
-      target: /promtail
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+        read_only: true
+      - type: volume
+        source: promtail-data
+        target: /promtail
 networks:
   logstack_gwnetwork:
     name: logstack_gwnetwork
