@@ -1,2 +1,4 @@
-LOGSTACK_GRAFANA_LOKI_VERSION=docker.io/grafana/loki:2.9.9
-LOGSTACK_PROMTAIL_VERSION=docker.io/grafana/promtail:2.9.9
+# Loki Promtail
+# https://github.com/grafana/loki
+LOGSTACK_GRAFANA_LOKI_VERSION=docker.io/grafana/loki:3.5.0
+LOGSTACK_PROMTAIL_VERSION=docker.io/grafana/promtail:3.5.0
